@@ -10,12 +10,13 @@ Mineome is still in a development state and as such some things may only be part
 
 - [x] Tags
 - [x] Recipes
-- [ ] Advancements
+- [ ] Advancements (half done, still need to add all criteria)
 - [ ] Predicates
 - [ ] Loot Tables
 
 The following may be worked on at some point but may not happen soon or at all:
 
+- JSON Text Components
 - Functions
 - 1.16 World Generation Settings
 - Resource Pack Components
