@@ -60,15 +60,62 @@ fn namespace_id_from_str_test() {
     );
 }
 
+impl Serialize for NamespacedId {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(&self.to_string())
+    }
+}
+
+struct NamespacedIdVisitor;
+
+impl<'de> serde::de::Visitor<'de> for NamespacedIdVisitor {
+    type Value = NamespacedId;
+
+    fn expecting(&self, formatter: &mut Formatter) -> FmtResult {
+        formatter.write_str("an NamespacedId")
+    }
+
+    fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+    where
+        E: serde::de::Error,
+    {
+        Ok(value.into())
+    }
+}
+
+impl<'de> Deserialize<'de> for NamespacedId {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        deserializer.deserialize_str(NamespacedIdVisitor)
+    }
+}
+
 impl Display for NamespacedId {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
-        write!(f, "{}:{}", self.namespace, self.id)
+        write!(
+            f,
+            "{}{}:{}",
+            if self.is_tag { "#" } else { "" },
+            self.namespace,
+            self.id
+        )
     }
 }
 
 impl Debug for NamespacedId {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
-        write!(f, "{}:{}", self.namespace, self.id)
+        write!(
+            f,
+            "{}{}:{}",
+            if self.is_tag { "#" } else { "" },
+            self.namespace,
+            self.id
+        )
     }
 }
 
