@@ -9,7 +9,7 @@ Mineome is a Rust library focusing on providing high quality type definitions fo
 Mineome is still in a development state and as such some things may only be partially or not at all supported that will eventually get support in the future. As of now, the following things are considered the current short term goals in their respective order:
 
 - [x] Tags
-- [ ] Recipes
+- [x] Recipes
 - [ ] Advancements
 - [ ] Predicates
 - [ ] Loot Tables
