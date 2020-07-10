@@ -2,53 +2,53 @@ use crate::internal_prelude::*;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct Recipe {
-    group: Option<String>,
+    pub group: Option<String>,
 
     #[serde(flatten)]
-    variant: RecipeVariant,
+    pub variant: RecipeVariant,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct CookingRecipeCommon {
-    ingredient: NamespacedId,
-    result: NamespacedId,
-    experience: f64,
+    pub ingredient: NamespacedId,
+    pub result: NamespacedId,
+    pub experience: f64,
     #[serde(rename = "cookingtime")]
-    cooking_time: Option<i32>,
+    pub cooking_time: Option<i32>,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct CraftingShapedRecipe {
-    pattern: (String, String, String),
-    ingredients: Vec<NamespacedId>,
-    key: HashMap<char, NamespacedId>,
-    result: RecipeResultWithCount,
+    pub pattern: (String, String, String),
+    pub ingredients: Vec<NamespacedId>,
+    pub key: HashMap<char, NamespacedId>,
+    pub result: RecipeResultWithCount,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct CraftingShapelessRecipe {
-    ingredients: Vec<NamespacedId>,
-    result: RecipeResultWithCount,
+    pub ingredients: Vec<NamespacedId>,
+    pub result: RecipeResultWithCount,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct RecipeResultWithCount {
-    count: Option<i32>,
-    item: NamespacedId,
+    pub count: Option<i32>,
+    pub item: NamespacedId,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct SmithingRecipe {
-    base: NamespacedId,
-    addition: NamespacedId,
-    result: NamespacedId,
+    pub base: NamespacedId,
+    pub addition: NamespacedId,
+    pub result: NamespacedId,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct StonecuttingRecipe {
-    ingredient: NamespacedId,
-    result: NamespacedId,
-    count: i32,
+    pub ingredient: NamespacedId,
+    pub result: NamespacedId,
+    pub count: i32,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]

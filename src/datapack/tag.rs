@@ -11,7 +11,7 @@ pub enum TagType {
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct Tag {
-    target_type: TagType,
-    replace: bool,
-    values: Vec<NamespacedId>,
+    pub target_type: TagType,
+    pub replace: bool,
+    pub values: Vec<NamespacedId>,
 }

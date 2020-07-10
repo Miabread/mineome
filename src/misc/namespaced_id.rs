@@ -6,9 +6,9 @@ use crate::internal_prelude::*;
 */
 #[derive(Clone, PartialEq)]
 pub struct NamespacedId {
-    namespace: String,
-    id: String,
-    is_tag: bool,
+    pub namespace: String,
+    pub id: String,
+    pub is_tag: bool,
 }
 
 impl NamespacedId {
