@@ -10,7 +10,8 @@ Mineome is still in a development state and as such some things may only be part
 
 - [x] Tags
 - [x] Recipes
-- [ ] Advancements (half done, still need to add all criteria)
+- [x] Criteria Fragments
+- [ ] Advancements
 - [ ] Predicates
 - [ ] Loot Tables
 

@@ -4,7 +4,7 @@ use crate::internal_prelude::*;
     Namespaced Ids are used as identifiers for various resources in Minecraft.
     See the [wiki page](https://minecraft.gamepedia.com/Namespaced_ID) for more details.
 */
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Eq, Hash)]
 pub struct NamespacedId {
     pub namespace: String,
     pub id: String,
