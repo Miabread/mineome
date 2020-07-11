@@ -226,7 +226,7 @@ pub enum AdvancementCriteria {
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct InventoryChangedCriteriaSlots {
-    empty: Option<RangeOrNumber<i32>>,
-    full: Option<RangeOrNumber<i32>>,
-    occupied: Option<RangeOrNumber<i32>>,
+    pub empty: Option<RangeOrNumber<i32>>,
+    pub full: Option<RangeOrNumber<i32>>,
+    pub occupied: Option<RangeOrNumber<i32>>,
 }
