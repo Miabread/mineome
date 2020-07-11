@@ -1,10 +1,16 @@
 [package]
 name = "mineome"
-version = "0.1.0"
-authors = ["Jdender~ <jdenderplays@gmail.com>"]
-edition = "2018"
+description = "Mineome is a Rust library focusing on providing high quality type definitions for the data-driven aspects of Minecraft Java Edition."
+categories = ["games", "api-bindings"]
+keywords = ["minecraft", "datapack", "data-driven"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+version = "0.1.0"
+edition = "2018"
+license = "MIT"
+
+reposotory = "https://github.com/Jdender/mineome"
+authors = ["Jdender~ <jdenderplays@gmail.com>"]
+readme = "README.md"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
