@@ -1,5 +1,8 @@
 # Mineome
 
+![Licence](https://img.shields.io/crates/l/mineome)
+[![Crates.io](https://img.shields.io/crates/v/mineome)](https://crates.io/crates/mineome)
+
 > The Minecraft Genome
 
 Mineome is a Rust library focusing on providing high quality type definitions for the data-driven aspects of Minecraft Java Edition.
