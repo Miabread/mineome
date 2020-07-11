@@ -11,7 +11,7 @@ Mineome is still in a development state and as such some things may only be part
 - [x] Tags
 - [x] Recipes
 - [x] Criteria Fragments
-- [ ] Advancements
+- [x] Advancements
 - [ ] Predicates
 - [ ] Loot Tables
 
