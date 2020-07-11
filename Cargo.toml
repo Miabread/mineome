@@ -8,7 +8,9 @@ version = "0.1.0"
 edition = "2018"
 license = "MIT"
 
-reposotory = "https://github.com/Jdender/mineome"
+documentation = "https://docs.rs/mineome"
+repository = "https://github.com/Jdender/mineome"
+homepage = "https://github.com/Jdender/mineome"
 authors = ["Jdender~ <jdenderplays@gmail.com>"]
 readme = "README.md"
 
