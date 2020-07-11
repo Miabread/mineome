@@ -1,5 +1,6 @@
 use super::{
-    ItemCriteriaFragment, LocationCriteriaFragment, PlayerCriteriaFragment, Range, RangeOrNumber,
+    DistanceCriteriaFragment, ItemCriteriaFragment, LocationCriteriaFragment,
+    PlayerCriteriaFragment, RangeOrNumber,
 };
 use crate::internal_prelude::*;
 
@@ -11,7 +12,7 @@ pub struct EntityCriteriaFragment {
     pub team: Option<String>,
     pub flags: Option<EntityCriteriaFlags>,
 
-    pub distance: Option<EntityCriteriaDistance>,
+    pub distance: Option<DistanceCriteriaFragment<f32>>,
     pub effects: HashMap<NamespacedId, EntityCriteriaEffect>,
     pub equipment: Option<EntityCriteriaEquipment>,
     pub location: Option<LocationCriteriaFragment>,
@@ -19,15 +20,6 @@ pub struct EntityCriteriaFragment {
     #[serde(rename = "type")]
     pub vehicle: Option<Box<EntityCriteriaFragment>>,
     pub player: Option<PlayerCriteriaFragment>,
-}
-
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-pub struct EntityCriteriaDistance {
-    pub absolute: Option<Range<f32>>,
-    pub horizontal: Option<Range<f32>>,
-    pub x: Option<Range<f32>>,
-    pub y: Option<Range<f32>>,
-    pub z: Option<Range<f32>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]

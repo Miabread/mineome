@@ -3,6 +3,7 @@ pub mod entity;
 pub mod item;
 pub mod location;
 pub mod player;
+pub mod position;
 
 use crate::internal_prelude::*;
 
@@ -11,6 +12,7 @@ pub use entity::EntityCriteriaFragment;
 pub use item::ItemCriteriaFragment;
 pub use location::LocationCriteriaFragment;
 pub use player::PlayerCriteriaFragment;
+pub use position::{DistanceCriteriaFragment, PositionCriteriaFragment};
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 #[serde(untagged)]

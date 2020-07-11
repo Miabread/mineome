@@ -1,4 +1,4 @@
-use super::{Range, RangeOrNumber};
+use super::{PositionCriteriaFragment, Range, RangeOrNumber};
 use crate::internal_prelude::*;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
@@ -11,7 +11,7 @@ pub struct LocationCriteriaFragment {
     pub feature: Option<NamespacedId>,
 
     pub light: Option<RangeOrNumber<i32>>,
-    pub position: Option<LocationCriteriaPosition>,
+    pub position: Option<PositionCriteriaFragment<f64>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
@@ -36,11 +36,4 @@ pub struct LocationCriteriaFluid {
     pub fluid: Option<NamespacedId>,
     pub tag: Option<NamespacedId>,
     pub state: HashMap<String, LocationCriteriaBlockState>,
-}
-
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-pub struct LocationCriteriaPosition {
-    pub x: RangeOrNumber<f64>,
-    pub y: RangeOrNumber<f64>,
-    pub z: RangeOrNumber<f64>,
 }
