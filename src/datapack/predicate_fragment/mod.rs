@@ -7,12 +7,12 @@ pub mod position;
 
 use crate::internal_prelude::*;
 
-pub use damage::{DamageCriteriaFragment, DamageTypeCriteriaFragment};
-pub use entity::EntityCriteriaFragment;
-pub use item::ItemCriteriaFragment;
-pub use location::LocationCriteriaFragment;
-pub use player::PlayerCriteriaFragment;
-pub use position::{DistanceCriteriaFragment, PositionCriteriaFragment};
+pub use damage::{DamagePredicateFragment, DamageTypePredicateFragment};
+pub use entity::EntityPredicateFragment;
+pub use item::ItemPredicateFragment;
+pub use location::LocationPredicateFragment;
+pub use player::PlayerPredicateFragment;
+pub use position::{DistancePredicateFragment, PositionPredicateFragment};
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 #[serde(untagged)]

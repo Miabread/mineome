@@ -2,7 +2,7 @@ use super::RangeOrNumber;
 use crate::internal_prelude::*;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-pub struct ItemCriteriaFragment {
+pub struct ItemPredicateFragment {
     pub item: Option<NamespacedId>,
     pub tag: Option<NamespacedId>,
     pub nbt: Option<String>,
@@ -11,12 +11,12 @@ pub struct ItemCriteriaFragment {
     pub count: Option<RangeOrNumber<i32>>,
     pub durability: Option<RangeOrNumber<i32>>,
 
-    pub enchantments: Vec<ItemEnchantmentCriteria>,
-    pub stored_enchantments: Vec<ItemEnchantmentCriteria>,
+    pub enchantments: Vec<ItemEnchantmentPredicate>,
+    pub stored_enchantments: Vec<ItemEnchantmentPredicate>,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-pub struct ItemEnchantmentCriteria {
+pub struct ItemEnchantmentPredicate {
     pub enchantment: NamespacedId,
     pub levels: RangeOrNumber<i32>,
 }

@@ -1,4 +1,4 @@
-use super::criteria_fragment::*;
+use super::predicate_fragment::*;
 use crate::internal_prelude::*;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
@@ -12,11 +12,11 @@ pub enum Predicate {
         properties: HashMap<String, String>,
     },
     DamageSourceProperties {
-        predicate: DamageTypeCriteriaFragment,
+        predicate: DamageTypePredicateFragment,
     },
     EntityProperties {
         entity: EntityPredicateSubject,
-        predicate: EntityCriteriaFragment,
+        predicate: EntityPredicateFragment,
     },
     EntityScores {
         entity: EntityPredicateSubject,
@@ -33,10 +33,10 @@ pub enum Predicate {
         offset_x: i32,
         offset_y: i32,
         offset_z: i32,
-        predicate: LocationCriteriaFragment,
+        predicate: LocationPredicateFragment,
     },
     MatchTool {
-        predicate: ItemCriteriaFragment,
+        predicate: ItemPredicateFragment,
     },
     RandomChance {
         chance: f32,

@@ -1,30 +1,30 @@
-use super::{PositionCriteriaFragment, Range, RangeOrNumber};
+use super::{PositionPredicateFragment, Range, RangeOrNumber};
 use crate::internal_prelude::*;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-pub struct LocationCriteriaFragment {
-    pub block: Option<LocationCriteriaBlock>,
-    pub fluid: Option<LocationCriteriaFluid>,
+pub struct LocationPredicateFragment {
+    pub block: Option<LocationPredicateBlock>,
+    pub fluid: Option<LocationPredicateFluid>,
 
     pub biome: Option<String>,
     pub dimension: Option<String>,
     pub feature: Option<NamespacedId>,
 
     pub light: Option<RangeOrNumber<i32>>,
-    pub position: Option<PositionCriteriaFragment<f64>>,
+    pub position: Option<PositionPredicateFragment<f64>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-pub struct LocationCriteriaBlock {
+pub struct LocationPredicateBlock {
     pub block: Option<NamespacedId>,
     pub tag: Option<NamespacedId>,
     pub nbt: Option<String>,
-    pub state: HashMap<String, LocationCriteriaBlockState>,
+    pub state: HashMap<String, LocationPredicateBlockState>,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 #[serde(untagged)]
-pub enum LocationCriteriaBlockState {
+pub enum LocationPredicateBlockState {
     Boolean(bool),
     Integer(i32),
     String(String),
@@ -32,8 +32,8 @@ pub enum LocationCriteriaBlockState {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-pub struct LocationCriteriaFluid {
+pub struct LocationPredicateFluid {
     pub fluid: Option<NamespacedId>,
     pub tag: Option<NamespacedId>,
-    pub state: HashMap<String, LocationCriteriaBlockState>,
+    pub state: HashMap<String, LocationPredicateBlockState>,
 }
