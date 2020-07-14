@@ -15,7 +15,7 @@ Mineome is still in a development state and as such some things may only be part
 - [x] Recipes
 - [x] Predicate Fragments
 - [x] Advancements
-- [ ] Predicates
+- [x] Predicates
 - [ ] Loot Tables
 
 The following may be worked on at some point but may not happen soon or at all:
