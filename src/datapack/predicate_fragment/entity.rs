@@ -46,3 +46,11 @@ pub struct EntityPredicateFlags {
     pub is_swimming: Option<bool>,
     pub is_baby: Option<bool>,
 }
+
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum EntityPredicateSubject {
+    This,
+    Killer,
+    KillerPlayer,
+}

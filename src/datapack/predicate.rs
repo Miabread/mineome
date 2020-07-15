@@ -62,11 +62,3 @@ pub enum Predicate {
         thundering: Option<bool>,
     },
 }
-
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[serde(rename_all = "snake_case")]
-pub enum EntityPredicateSubject {
-    This,
-    Killer,
-    KillerPlayer,
-}

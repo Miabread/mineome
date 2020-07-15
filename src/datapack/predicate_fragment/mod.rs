@@ -8,7 +8,7 @@ pub mod position;
 use crate::internal_prelude::*;
 
 pub use damage::{DamagePredicateFragment, DamageTypePredicateFragment};
-pub use entity::EntityPredicateFragment;
+pub use entity::{EntityPredicateFragment, EntityPredicateSubject};
 pub use item::ItemPredicateFragment;
 pub use location::LocationPredicateFragment;
 pub use player::PlayerPredicateFragment;
