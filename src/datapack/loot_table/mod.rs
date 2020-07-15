@@ -1,7 +1,8 @@
+pub mod loot_function;
+
 use super::{predicate::Predicate, predicate_fragment::RangeOrNumber};
 use crate::internal_prelude::*;
-
-pub mod loot_function;
+use loot_function::LootFunction;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct LootTable {
@@ -30,7 +31,7 @@ pub enum LootTableType {
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct LootTablePool {
     conditions: Vec<Predicate>,
-    functions: (),
+    functions: Vec<LootFunction>,
     rolls: RangeOrNumber<i32>,
     bonus_rolls: Option<RangeOrNumber<f32>>,
     entries: Vec<LootTableEntry>,
@@ -43,7 +44,7 @@ pub struct LootTableEntry {
     name: Option<NamespacedId>,
     children: Vec<LootTableEntry>,
     expand: Option<bool>,
-    functions: (),
+    functions: Vec<LootFunction>,
     weight: i32,
     quality: i32,
 }

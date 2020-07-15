@@ -1,9 +1,19 @@
-use super::{super::predicate_fragment::*, LootTableEntry};
+use super::{
+    super::{predicate::Predicate, predicate_fragment::*},
+    LootTableEntry,
+};
 use crate::internal_prelude::*;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[serde(rename_all = "snake_case")]
-pub enum LootFunction {
+pub struct LootFunction {
+    #[serde(flatten)]
+    function_type: LootFunctionType,
+    conditions: Vec<Predicate>,
+}
+
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case", tag = "function")]
+pub enum LootFunctionType {
     ApplyBonus {
         enchantment: NamespacedId,
         formula: LootFunctionApplyBonusFormula,
