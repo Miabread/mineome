@@ -7,21 +7,24 @@
 
 Mineome is a Rust library focusing on providing high quality type definitions for the data-driven aspects of Minecraft Java Edition.
 
-## Alpha Notice
+## Current Features
 
-Mineome is still in a development state and as such some things may only be partially or not at all supported that will eventually get support in the future. As of now, the following things are considered the current short term goals in their respective order:
+Mineome currently supports the following datapack structures:
 
-- [x] Tags
-- [x] Recipes
-- [x] Predicate Fragments
-- [x] Advancements
-- [x] Predicates
-- [ ] Loot Tables
+- Recipes
+- Advancements & Criteria
+- Loot Tables
+- Predicates
+- Predicate Fragments (common types shared between Predicates and Criteria)
+- Tags (block, entity, item, and function)
+
+## Possible Future Features
 
 The following may be worked on at some point but may not happen soon or at all:
 
 - JSON Text Components
-- Functions
+- Rust builders for all existing structures
+- Datapack Functions
 - 1.16 World Generation Settings
 - Resource Pack Components
 - World Format NBT
