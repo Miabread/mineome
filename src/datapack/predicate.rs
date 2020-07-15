@@ -12,11 +12,11 @@ pub enum Predicate {
         properties: HashMap<String, String>,
     },
     DamageSourceProperties {
-        predicate: DamageTypePredicateFragment,
+        predicate: Box<DamageTypePredicateFragment>,
     },
     EntityProperties {
         entity: EntityPredicateSubject,
-        predicate: EntityPredicateFragment,
+        predicate: Box<EntityPredicateFragment>,
     },
     EntityScores {
         entity: EntityPredicateSubject,
@@ -33,7 +33,7 @@ pub enum Predicate {
         offset_x: i32,
         offset_y: i32,
         offset_z: i32,
-        predicate: LocationPredicateFragment,
+        predicate: Box<LocationPredicateFragment>,
     },
     MatchTool {
         predicate: ItemPredicateFragment,

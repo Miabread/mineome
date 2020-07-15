@@ -156,7 +156,7 @@ pub enum AdvancementPredicate {
     #[serde(rename = "minecraft:player_hurt_entity")]
     PlayerHurtEntity {
         damage: Option<DamagePredicateFragment>,
-        entity: Option<EntityPredicateFragment>,
+        entity: Option<Box<EntityPredicateFragment>>,
         player: Option<Predicate>,
     },
     #[serde(rename = "minecraft:player_interacted_with_entity")]
