@@ -6,29 +6,53 @@ use crate::internal_prelude::*;
 */
 #[derive(Clone, PartialEq, Eq, Hash)]
 pub struct NamespacedId {
-    pub namespace: String,
-    pub id: String,
-    pub is_tag: bool,
+    namespace: String,
+    id: String,
+    is_tag: bool,
 }
 
 impl NamespacedId {
     /// Create a new NamespacedId
-    pub fn new(is_tag: bool, namespace: &str, id: &str) -> Self {
-        NamespacedId {
+    pub fn new(is_tag: bool, namespace: &str, id: &str) -> Result<Self, InvalidNamespacedIdError> {
+        // Validate namespace [a-zA-Z0-9_-]
+        for (position, kind) in namespace.chars().enumerate() {
+            if !(kind.is_alphanumeric() || kind == '_' || kind == '-') {
+                return Err(InvalidNamespacedIdError::InvalidCharInNamespace { kind, position });
+            }
+        }
+
+        // Validate id [a-zA-Z0-9_./-]
+        for (position, kind) in id.chars().enumerate() {
+            if !(kind.is_alphanumeric() || kind == '_' || kind == '-' || kind == '/' || kind == '.')
+            {
+                return Err(InvalidNamespacedIdError::InvalidCharInId { kind, position });
+            }
+        }
+
+        Ok(NamespacedId {
             namespace: namespace.to_string(),
             id: id.to_string(),
             is_tag,
-        }
+        })
     }
 
-    /// Get a instance of mineome's marker for invalid NamespacedIds
-    pub fn invalid() -> Self {
-        Self::new(false, "mineome", "{invalid}")
+    pub fn namespace(&self) -> &str {
+        &self.namespace
+    }
+
+    pub fn id(&self) -> &str {
+        &self.id
+    }
+
+    pub fn is_tag(&self) -> bool {
+        self.is_tag
     }
 }
 
-impl From<&str> for NamespacedId {
-    fn from(string: &str) -> Self {
+impl TryFrom<&str> for NamespacedId {
+    type Error = InvalidNamespacedIdError;
+
+    fn try_from(string: &str) -> Result<Self, Self::Error> {
         // See if tag and remove # if so
         let is_tag = dbg!(string.starts_with('#'));
         let string = dbg!(if is_tag { &string[1..] } else { string });
@@ -38,60 +62,10 @@ impl From<&str> for NamespacedId {
         match (split.next(), split.next()) {
             (Some(ns), Some(id)) => NamespacedId::new(is_tag, ns, id),
             (Some(id), None) => NamespacedId::new(is_tag, "minecraft", id),
-            _ => NamespacedId::invalid(),
+            _ => Err(InvalidNamespacedIdError::CouldNotParse {
+                text: string.to_string(),
+            }),
         }
-    }
-}
-
-#[cfg(test)]
-#[test]
-fn namespace_id_from_str_test() {
-    assert_eq!(
-        NamespacedId::from("foo:bar"),
-        NamespacedId::new(false, "foo", "bar"),
-    );
-    assert_eq!(
-        NamespacedId::from("#foo:bar/baz"),
-        NamespacedId::new(true, "foo", "bar/baz"),
-    );
-    assert_eq!(
-        NamespacedId::from("abcdef"),
-        NamespacedId::new(false, "minecraft", "abcdef"),
-    );
-}
-
-impl Serialize for NamespacedId {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        serializer.serialize_str(&self.to_string())
-    }
-}
-
-struct NamespacedIdVisitor;
-
-impl<'de> serde::de::Visitor<'de> for NamespacedIdVisitor {
-    type Value = NamespacedId;
-
-    fn expecting(&self, formatter: &mut Formatter) -> FmtResult {
-        formatter.write_str("an NamespacedId")
-    }
-
-    fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        Ok(value.into())
-    }
-}
-
-impl<'de> Deserialize<'de> for NamespacedId {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        deserializer.deserialize_str(NamespacedIdVisitor)
     }
 }
 
@@ -119,32 +93,82 @@ impl Debug for NamespacedId {
     }
 }
 
-pub enum NamespacedIdValidationError {
+#[derive(Debug, Clone, PartialEq)]
+pub enum InvalidNamespacedIdError {
     InvalidCharInNamespace { kind: char, position: usize },
     InvalidCharInId { kind: char, position: usize },
+    CouldNotParse { text: String },
 }
 
-impl Validate for NamespacedId {
-    type Error = NamespacedIdValidationError;
+impl Error for InvalidNamespacedIdError {}
 
-    fn validate(&self) -> Vec<Self::Error> {
-        let mut errors = Vec::new();
-
-        // Validate namespace [a-zA-Z0-9_-]
-        for (position, kind) in self.namespace.chars().enumerate() {
-            if !(kind.is_alphanumeric() || kind == '_' || kind == '-') {
-                errors.push(NamespacedIdValidationError::InvalidCharInNamespace { kind, position })
+impl Display for InvalidNamespacedIdError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            InvalidNamespacedIdError::InvalidCharInNamespace { kind, position } => write!(
+                f,
+                "Invalid char {} in namespace at position {}",
+                kind, position
+            ),
+            InvalidNamespacedIdError::InvalidCharInId { kind, position } => {
+                write!(f, "Invalid char {} in id at position {}", kind, position)
+            }
+            InvalidNamespacedIdError::CouldNotParse { text } => {
+                write!(f, "Could not parse {} as a NamespacedId", text)
             }
         }
+    }
+}
 
-        // Validate id [a-zA-Z0-9_./-]
-        for (position, kind) in self.id.chars().enumerate() {
-            if !(kind.is_alphanumeric() || kind == '_' || kind == '-' || kind == '/' || kind == '.')
-            {
-                errors.push(NamespacedIdValidationError::InvalidCharInId { kind, position })
-            }
-        }
+#[cfg(test)]
+#[test]
+fn namespace_id_from_str_test() -> Result<(), InvalidNamespacedIdError> {
+    assert_eq!(
+        NamespacedId::try_from("foo:bar")?,
+        NamespacedId::new(false, "foo", "bar")?,
+    );
+    assert_eq!(
+        NamespacedId::try_from("#foo:bar/baz")?,
+        NamespacedId::new(true, "foo", "bar/baz")?,
+    );
+    assert_eq!(
+        NamespacedId::try_from("abcdef")?,
+        NamespacedId::new(false, "minecraft", "abcdef")?,
+    );
+    Ok(())
+}
 
-        errors
+impl Serialize for NamespacedId {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(&self.to_string())
+    }
+}
+
+struct NamespacedIdVisitor;
+
+impl<'de> serde::de::Visitor<'de> for NamespacedIdVisitor {
+    type Value = NamespacedId;
+
+    fn expecting(&self, formatter: &mut Formatter) -> FmtResult {
+        formatter.write_str("an NamespacedId")
+    }
+
+    fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+    where
+        E: serde::de::Error,
+    {
+        value.try_into().map_err(E::custom)
+    }
+}
+
+impl<'de> Deserialize<'de> for NamespacedId {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        deserializer.deserialize_str(NamespacedIdVisitor)
     }
 }
