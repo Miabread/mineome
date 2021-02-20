@@ -1,7 +1,11 @@
-use crate::internal_prelude::*;
+use crate::{
+    internal_prelude::*,
+    misc::namespaced_id::recipe_advancement_serde
+};
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct Recipe {
+    #[serde(flatten)]
     pub group: Option<String>,
 
     #[serde(flatten)]
@@ -10,7 +14,9 @@ pub struct Recipe {
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct CookingRecipeCommon {
+    #[serde(with = "recipe_advancement_serde")]
     pub ingredient: NamespacedId,
+    #[serde(with = "recipe_advancement_serde")]
     pub result: NamespacedId,
     pub experience: f64,
     #[serde(rename = "cookingtime")]
@@ -19,14 +25,18 @@ pub struct CookingRecipeCommon {
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct CraftingShapedRecipe {
-    pub pattern: (String, String, String),
+    pub pattern: Vec<String>,
+    #[serde(default)]
+    #[serde(with = "recipe_advancement_serde")]
     pub ingredients: Vec<NamespacedId>,
+    #[serde(with = "recipe_advancement_serde")]
     pub key: HashMap<char, NamespacedId>,
     pub result: RecipeResultWithCount,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct CraftingShapelessRecipe {
+    #[serde(with = "recipe_advancement_serde")]
     pub ingredients: Vec<NamespacedId>,
     pub result: RecipeResultWithCount,
 }
@@ -34,19 +44,25 @@ pub struct CraftingShapelessRecipe {
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct RecipeResultWithCount {
     pub count: Option<i32>,
+    #[serde(with = "recipe_advancement_serde")]
     pub item: NamespacedId,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct SmithingRecipe {
+    #[serde(with = "recipe_advancement_serde")]
     pub base: NamespacedId,
+    #[serde(with = "recipe_advancement_serde")]
     pub addition: NamespacedId,
+    #[serde(with = "recipe_advancement_serde")]
     pub result: NamespacedId,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct StonecuttingRecipe {
+    #[serde(with = "recipe_advancement_serde")]
     pub ingredient: NamespacedId,
+    #[serde(with = "recipe_advancement_serde")]
     pub result: NamespacedId,
     pub count: i32,
 }
@@ -54,46 +70,46 @@ pub struct StonecuttingRecipe {
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 #[serde(tag = "type")]
 pub enum RecipeVariant {
-    #[serde(rename = "blasting")]
+    #[serde(rename = "minecraft:blasting")]
     Blasting(CookingRecipeCommon),
-    #[serde(rename = "campfire_cooking")]
+    #[serde(rename = "minecraft:campfire_cooking")]
     CampfireCooking(CookingRecipeCommon),
-    #[serde(rename = "crafting_shaped")]
+    #[serde(rename = "minecraft:crafting_shaped")]
     CraftingShaped(CraftingShapedRecipe),
-    #[serde(rename = "crafting_shapeless")]
+    #[serde(rename = "minecraft:crafting_shapeless")]
     CraftingShapeless(CraftingShapelessRecipe),
-    #[serde(rename = "smelting")]
+    #[serde(rename = "minecraft:smelting")]
     Smelting(CookingRecipeCommon),
-    #[serde(rename = "smithing")]
+    #[serde(rename = "minecraft:smithing")]
     Smithing(SmithingRecipe),
-    #[serde(rename = "smoking")]
+    #[serde(rename = "minecraft:smoking")]
     Smoking(CookingRecipeCommon),
-    #[serde(rename = "stonecutting")]
+    #[serde(rename = "minecraft:stonecutting")]
     Stonecutting(StonecuttingRecipe),
-    #[serde(rename = "crafting_special_armordye")]
+    #[serde(rename = "minecraft:crafting_special_armordye")]
     CraftingSpecialArmorDye,
-    #[serde(rename = "crafting_special_bannerduplicate")]
+    #[serde(rename = "minecraft:crafting_special_bannerduplicate")]
     CraftingSpecialBannerDuplicate,
-    #[serde(rename = "crafting_special_bookcloning")]
+    #[serde(rename = "minecraft:crafting_special_bookcloning")]
     CraftingSpecialBookCloning,
-    #[serde(rename = "crafting_special_firework_rocket")]
+    #[serde(rename = "minecraft:crafting_special_firework_rocket")]
     CraftingSpecialFireworkRocket,
-    #[serde(rename = "crafting_special_firework_star")]
+    #[serde(rename = "minecraft:crafting_special_firework_star")]
     CraftingSpecialFireworkStar,
-    #[serde(rename = "crafting_special_firework_star_fade")]
+    #[serde(rename = "minecraft:crafting_special_firework_star_fade")]
     CraftingSpecialFireworkStarFade,
-    #[serde(rename = "crafting_special_mapcloning")]
+    #[serde(rename = "minecraft:crafting_special_mapcloning")]
     CraftingSpecialMapCloning,
-    #[serde(rename = "crafting_special_mapextending")]
+    #[serde(rename = "minecraft:crafting_special_mapextending")]
     CraftingSpecialMapExtending,
-    #[serde(rename = "crafting_special_repairitem")]
+    #[serde(rename = "minecraft:crafting_special_repairitem")]
     CraftingSpecialRepairItem,
-    #[serde(rename = "crafting_special_shielddecoration")]
+    #[serde(rename = "minecraft:crafting_special_shielddecoration")]
     CraftingSpecialShieldDecoration,
-    #[serde(rename = "crafting_special_shulkerboxcoloring")]
+    #[serde(rename = "minecraft:crafting_special_shulkerboxcoloring")]
     CraftingSpecialShulkerBoxColoring,
-    #[serde(rename = "crafting_special_tippedarrow")]
+    #[serde(rename = "minecraft:crafting_special_tippedarrow")]
     CraftingSpecialTippedArrow,
-    #[serde(rename = "crafting_special_suspiciousstew")]
+    #[serde(rename = "minecraft:crafting_special_suspiciousstew")]
     CraftingSpecialSuspiciousStew,
 }

@@ -172,3 +172,77 @@ impl<'de> Deserialize<'de> for NamespacedId {
         deserializer.deserialize_str(NamespacedIdVisitor)
     }
 }
+
+pub(crate) mod recipe_advancement_serde {
+    use super::{
+        NamespacedId,
+        InvalidNamespacedIdError
+    };
+    use serde::{
+        ser::{SerializeStruct, Serializer},
+        de::{self, MapAccess, Visitor},
+        Deserializer
+    };
+    use std::fmt;
+
+    pub fn serialize<S>(namespaced_id: &NamespacedId, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut state = serializer.serialize_struct("NamespacedId", 1)?;
+        state.serialize_field(if namespaced_id.is_tag {"tag"} else {"item"},&namespaced_id.to_string())?;
+        state.end()
+    }
+
+    fn parse_namespace_and_id(string: &str) -> Result<(&str, &str), InvalidNamespacedIdError> {
+        let mut split = string.split(':').take(2);
+        match (split.next(), split.next()) {
+            (Some(ns), Some(id)) => Ok((ns, id)),
+            _ => Err(InvalidNamespacedIdError::CouldNotParse {
+                text: string.to_string(),
+            }),
+        }
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<NamespacedId, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserializer.deserialize_map(NamespacedIdVisitor)
+    }
+
+    struct NamespacedIdVisitor;
+
+    impl<'de> Visitor<'de> for NamespacedIdVisitor {
+        type Value = NamespacedId;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            formatter
+                .write_str(r#"an object with a "item" or "tag" field containing a NamespacedId"#)
+        }
+
+        fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
+        where
+            A: MapAccess<'de>,
+        {
+            let (is_tag, value) = match map.next_entry()? {
+                Some((key, value)) => (
+                    match key {
+                        "item" => false,
+                        "tag" => true,
+                        _ => Err(de::Error::unknown_field(value, &["item", "tag"]))?,
+                    },
+                    value,
+                ),
+                None => Err(de::Error::invalid_length(0, &"a length of 1"))?,
+            };
+
+            if let Some(key) = map.next_key()? {
+                Err(de::Error::unknown_field(key, &["item", "tag"]))?
+            }
+
+            let (ns, id) = parse_namespace_and_id(value).map_err(de::Error::custom)?;
+            Ok(NamespacedId::new(is_tag, ns, id).unwrap())
+        }
+    }
+}
