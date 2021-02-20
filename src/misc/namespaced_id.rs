@@ -1,5 +1,5 @@
 use crate::internal_prelude::*;
-
+pub use self::field_tagged_namespaced_id::FieldTaggedNamespacedId;
 /**
     Namespaced Ids are used as identifiers for various resources in Minecraft.
     See the [wiki page](https://minecraft.gamepedia.com/Namespaced_ID) for more details.
@@ -173,7 +173,7 @@ impl<'de> Deserialize<'de> for NamespacedId {
     }
 }
 
-pub(crate) mod recipe_advancement_serde {
+pub(crate) mod field_tagged_namespaced_id {
     use super::{
         NamespacedId,
         InvalidNamespacedIdError
@@ -184,14 +184,19 @@ pub(crate) mod recipe_advancement_serde {
         Deserializer
     };
     use std::fmt;
+    use serde_with::{SerializeAs, DeserializeAs};
 
-    pub fn serialize<S>(namespaced_id: &NamespacedId, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut state = serializer.serialize_struct("NamespacedId", 1)?;
-        state.serialize_field(if namespaced_id.is_tag {"tag"} else {"item"},&namespaced_id.to_string())?;
-        state.end()
+    pub struct FieldTaggedNamespacedId;
+
+    impl SerializeAs<NamespacedId> for FieldTaggedNamespacedId {
+        fn serialize_as<S>(namespaced_id: &NamespacedId, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: Serializer,
+        {
+            let mut state = serializer.serialize_struct("NamespacedId", 1)?;
+            state.serialize_field(if namespaced_id.is_tag { "tag" } else { "item" }, &namespaced_id.to_string())?;
+            state.end()
+        }
     }
 
     fn parse_namespace_and_id(string: &str) -> Result<(&str, &str), InvalidNamespacedIdError> {
@@ -204,11 +209,13 @@ pub(crate) mod recipe_advancement_serde {
         }
     }
 
-    pub fn deserialize<'de, D>(deserializer: D) -> Result<NamespacedId, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        deserializer.deserialize_map(NamespacedIdVisitor)
+    impl<'de> DeserializeAs<'de, NamespacedId> for FieldTaggedNamespacedId {
+        fn deserialize_as<D>(deserializer: D) -> Result<NamespacedId, D::Error>
+            where
+                D: Deserializer<'de>,
+        {
+            deserializer.deserialize_map(NamespacedIdVisitor)
+        }
     }
 
     struct NamespacedIdVisitor;
