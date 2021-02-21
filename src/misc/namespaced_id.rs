@@ -54,8 +54,8 @@ impl TryFrom<&str> for NamespacedId {
 
     fn try_from(string: &str) -> Result<Self, Self::Error> {
         // See if tag and remove # if so
-        let is_tag = dbg!(string.starts_with('#'));
-        let string = dbg!(if is_tag { &string[1..] } else { string });
+        let is_tag = string.starts_with('#');
+        let string = if is_tag { &string[1..] } else { string };
 
         // Parse the rest of the namespace
         let mut split = string.split(':').take(2);
