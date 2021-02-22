@@ -28,9 +28,9 @@ pub enum SelectorFragment {
     Y(f64),
     Z(f64),
     Distance(SelectorRange<i32>),
-    DX(f64),
-    DY(f64),
-    DZ(f64),
+    DifferenceX(f64),
+    DifferenceY(f64),
+    DifferenceZ(f64),
     Scores(HashMap<String, SelectorRange<i32>>),
     Tag(String),
     Team(String),
@@ -42,7 +42,7 @@ pub enum SelectorFragment {
     XRotation(SelectorRange<f64>),
     YRotation(SelectorRange<f64>),
     Type(NamespacedId),
-    NBT,
+    Nbt,
     Advancements(HashMap<NamespacedId, SelectorAdvancements>),
     Predicate(NamespacedId),
 }
@@ -126,15 +126,15 @@ impl Display for SelectorArgument {
                 name("distance")?;
                 write!(f, "{}", range)
             }
-            DX(num) => {
+            DifferenceX(num) => {
                 name("dx")?;
                 write!(f, "{}", num)
             }
-            DY(num) => {
+            DifferenceY(num) => {
                 name("dy")?;
                 write!(f, "{}", num)
             }
-            DZ(num) => {
+            DifferenceZ(num) => {
                 name("dz")?;
                 write!(f, "{}", num)
             }
@@ -185,7 +185,7 @@ impl Display for SelectorArgument {
                 name("level")?;
                 write!(f, "{}", text)
             }
-            NBT => todo!(),
+            Nbt => todo!(),
             Advancements(goals) => {
                 use SelectorAdvancements::*;
 
