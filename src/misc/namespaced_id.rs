@@ -243,15 +243,15 @@ pub(crate) mod field_tagged_namespaced_id {
                     match key.as_str() {
                         "item" => false,
                         "tag" => true,
-                        _ => Err(de::Error::unknown_field(&value, &["item", "tag"]))?,
+                        _ => return Err(de::Error::unknown_field(&value, &["item", "tag"])),
                     },
                     value,
                 ),
-                None => Err(de::Error::invalid_length(0, &"a length of 1"))?,
+                None => return Err(de::Error::invalid_length(0, &"a length of 1")),
             };
 
             if let Some(key) = map.next_key()? {
-                Err(de::Error::unknown_field(key, &["item", "tag"]))?
+                return Err(de::Error::unknown_field(key, &["item", "tag"]));
             }
 
             let (ns, id) = parse_namespace_and_id(&value).map_err(de::Error::custom)?;
