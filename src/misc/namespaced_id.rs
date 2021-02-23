@@ -199,7 +199,7 @@ pub(crate) mod field_tagged_namespaced_id {
             let mut state = serializer.serialize_struct("NamespacedId", 1)?;
             state.serialize_field(
                 if namespaced_id.is_tag { "tag" } else { "item" },
-                &namespaced_id.to_string(),
+                &format!("{}:{}", namespaced_id.namespace(), namespaced_id.id(),),
             )?;
             state.end()
         }

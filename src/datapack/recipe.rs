@@ -3,7 +3,7 @@ use serde_with::serde_as;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct Recipe {
-    #[serde(flatten)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub group: Option<String>,
     #[serde(flatten)]
     pub variant: RecipeVariant,
@@ -43,6 +43,7 @@ pub enum Ingredient {
 #[serde_as]
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct RecipeResultWithCount {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub count: Option<i32>,
     #[serde_as(as = "FieldTaggedNamespacedId")]
     #[serde(flatten)]
