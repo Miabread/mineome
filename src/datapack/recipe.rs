@@ -1,24 +1,17 @@
-use crate::{
-    internal_prelude::*,
-    misc::namespaced_id::FieldTaggedNamespacedId,
-};
+use crate::{internal_prelude::*, misc::namespaced_id::FieldTaggedNamespacedId};
 use serde_with::serde_as;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct Recipe {
     #[serde(flatten)]
     pub group: Option<String>,
-
     #[serde(flatten)]
     pub variant: RecipeVariant,
 }
 
-#[serde_as]
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct CookingRecipeCommon {
-    #[serde_as(as = "FieldTaggedNamespacedId")]
-    pub ingredient: NamespacedId,
-    #[serde_as(as = "FieldTaggedNamespacedId")]
+    pub ingredient: Ingredient,
     pub result: NamespacedId,
     pub experience: f64,
     #[serde(rename = "cookingtime")]
@@ -29,20 +22,22 @@ pub struct CookingRecipeCommon {
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct CraftingShapedRecipe {
     pub pattern: Vec<String>,
-    #[serde(default)]
-    #[serde_as(as = "Vec<FieldTaggedNamespacedId>")]
-    pub ingredients: Vec<NamespacedId>,
-    #[serde_as(as = "HashMap<_, FieldTaggedNamespacedId>")]
-    pub key: HashMap<char, NamespacedId>,
+    pub key: HashMap<char, Ingredient>,
+    pub result: RecipeResultWithCount,
+}
+
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+pub struct CraftingShapelessRecipe {
+    pub ingredients: Vec<Ingredient>,
     pub result: RecipeResultWithCount,
 }
 
 #[serde_as]
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-pub struct CraftingShapelessRecipe {
-    #[serde_as(as = "Vec<FieldTaggedNamespacedId>")]
-    pub ingredients: Vec<NamespacedId>,
-    pub result: RecipeResultWithCount,
+#[serde(untagged)]
+pub enum Ingredient {
+    Specific(#[serde_as(as = "FieldTaggedNamespacedId")] NamespacedId),
+    Selection(#[serde_as(as = "Vec<FieldTaggedNamespacedId>")] Vec<NamespacedId>),
 }
 
 #[serde_as]
@@ -50,6 +45,7 @@ pub struct CraftingShapelessRecipe {
 pub struct RecipeResultWithCount {
     pub count: Option<i32>,
     #[serde_as(as = "FieldTaggedNamespacedId")]
+    #[serde(flatten)]
     pub item: NamespacedId,
 }
 
@@ -64,12 +60,9 @@ pub struct SmithingRecipe {
     pub result: NamespacedId,
 }
 
-#[serde_as]
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct StonecuttingRecipe {
-    #[serde_as(as = "FieldTaggedNamespacedId")]
-    pub ingredient: NamespacedId,
-    #[serde_as(as = "FieldTaggedNamespacedId")]
+    pub ingredient: Ingredient,
     pub result: NamespacedId,
     pub count: i32,
 }
