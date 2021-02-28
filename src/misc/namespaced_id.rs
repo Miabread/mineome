@@ -1,5 +1,5 @@
+pub use self::field_tagged_namespaced_id::FieldTaggedNamespacedId;
 use crate::internal_prelude::*;
-
 /**
     Namespaced Ids are used as identifiers for various resources in Minecraft.
     See the [wiki page](https://minecraft.gamepedia.com/Namespaced_ID) for more details.
@@ -13,7 +13,13 @@ pub struct NamespacedId {
 
 impl NamespacedId {
     /// Create a new NamespacedId
-    pub fn new(is_tag: bool, namespace: &str, id: &str) -> Result<Self, InvalidNamespacedIdError> {
+    pub fn new<S: Into<String>>(
+        is_tag: bool,
+        namespace: S,
+        id: S,
+    ) -> Result<Self, InvalidNamespacedIdError> {
+        let namespace = namespace.into();
+        let id = id.into();
         // Validate namespace [a-zA-Z0-9_-]
         for (position, kind) in namespace.chars().enumerate() {
             if !(kind.is_alphanumeric() || kind == '_' || kind == '-') {
@@ -30,8 +36,8 @@ impl NamespacedId {
         }
 
         Ok(NamespacedId {
-            namespace: namespace.to_string(),
-            id: id.to_string(),
+            namespace,
+            id,
             is_tag,
         })
     }
@@ -170,5 +176,86 @@ impl<'de> Deserialize<'de> for NamespacedId {
         D: serde::Deserializer<'de>,
     {
         deserializer.deserialize_str(NamespacedIdVisitor)
+    }
+}
+
+pub(crate) mod field_tagged_namespaced_id {
+    use super::{InvalidNamespacedIdError, NamespacedId};
+    use serde::{
+        de::{self, MapAccess, Visitor},
+        ser::{SerializeStruct, Serializer},
+        Deserializer,
+    };
+    use serde_with::{DeserializeAs, SerializeAs};
+    use std::fmt;
+
+    pub struct FieldTaggedNamespacedId;
+
+    impl SerializeAs<NamespacedId> for FieldTaggedNamespacedId {
+        fn serialize_as<S>(namespaced_id: &NamespacedId, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: Serializer,
+        {
+            let mut state = serializer.serialize_struct("NamespacedId", 1)?;
+            state.serialize_field(
+                if namespaced_id.is_tag { "tag" } else { "item" },
+                &format!("{}:{}", namespaced_id.namespace(), namespaced_id.id(),),
+            )?;
+            state.end()
+        }
+    }
+
+    fn parse_namespace_and_id(string: &str) -> Result<(&str, &str), InvalidNamespacedIdError> {
+        let mut split = string.split(':').take(2);
+        match (split.next(), split.next()) {
+            (Some(ns), Some(id)) => Ok((ns, id)),
+            _ => Err(InvalidNamespacedIdError::CouldNotParse {
+                text: string.to_string(),
+            }),
+        }
+    }
+
+    impl<'de> DeserializeAs<'de, NamespacedId> for FieldTaggedNamespacedId {
+        fn deserialize_as<D>(deserializer: D) -> Result<NamespacedId, D::Error>
+        where
+            D: Deserializer<'de>,
+        {
+            deserializer.deserialize_map(NamespacedIdVisitor)
+        }
+    }
+
+    struct NamespacedIdVisitor;
+
+    impl<'de> Visitor<'de> for NamespacedIdVisitor {
+        type Value = NamespacedId;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            formatter
+                .write_str(r#"an object with a "item" or "tag" field containing a NamespacedId"#)
+        }
+
+        fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
+        where
+            A: MapAccess<'de>,
+        {
+            let (is_tag, value) = match map.next_entry::<String, String>()? {
+                Some((key, value)) => (
+                    match key.as_str() {
+                        "item" => false,
+                        "tag" => true,
+                        _ => return Err(de::Error::unknown_field(&value, &["item", "tag"])),
+                    },
+                    value,
+                ),
+                None => return Err(de::Error::invalid_length(0, &"a length of 1")),
+            };
+
+            if let Some(key) = map.next_key()? {
+                return Err(de::Error::unknown_field(key, &["item", "tag"]));
+            }
+
+            let (ns, id) = parse_namespace_and_id(&value).map_err(de::Error::custom)?;
+            Ok(NamespacedId::new(is_tag, ns, id).unwrap())
+        }
     }
 }
